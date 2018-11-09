@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: clair_postgres
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ""
+    network_mode: host
+
+  clair:
+    container_name: clair_clair
+    image: quay.io/coreos/clair:latest
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    volumes:
+      - /tmp:/tmp
+      - ./clair_config:/config
+    command: [-config, /config/config.yaml]
+    network_mode: host 
+
+  registry:
+    image: registry:latest
+    network_mode: host
+
+
+
